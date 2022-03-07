@@ -1,0 +1,56 @@
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0 minimum-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>구구단</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    </head>
+    <body>
+        <!-- 핵심은 이 틀은 절대로 바뀌지 않음! 대신에 그 안에 속한 데이터만 바뀌는 것임(간혹 직접 태그에 접근해야할 때가 있음.) -->
+        <div id="root">
+            <!-- {{}} 안에 data 안에서 선언한 변수를 활용할 수가 있고, 간단한 표현식도 사용가능하다. -->
+            <div>{{ first }} 곱하기 {{ second }} 는?</div>
+            <!-- 참고로 페이지가 새로고침되면 Vue 가 업데이트 하는게 아니고 form 이 업데이트 해주는 것이다. -->
+            <!-- 또, 새로고침되면 SPA(Single Page Application) 이라고 할 수 없다. -->
+            <form v-on:submit="onSubmitForm">
+                <!-- 기본적으로 양방향 바인딩인듯 -->
+                <!-- ref 를 명시하면 태그에 접근할 수 있음. ref 는 남발하면 큰일나고 최대한 데이터를 활용하려고 해야함. -->
+                <!-- 잘못하면 화면과 실제 데이터가 바뀔 수도 있다. -->
+                <!-- v-model 을 사용하면 아래 data 속성에서 만든 변수와 연동된다. 주로 form 태그와 함께 쓰인다. -->
+                <input type="number" ref="answer" v-model="value">
+                <button type="submit">입력</button>
+                <div>{{ result }}</div>
+            </form>
+        </div>
+    </body>
+    <script>
+        const app = new Vue({
+            el: '#root',
+            data: { // 바뀌는 부분이 들어가야 함
+                first: Math.ceil(Math.random() * 9),
+                second: Math.ceil(Math.random() * 9),
+                value: '',
+                result: '',
+            },
+            methods: {
+                onSubmitForm(e) {
+                    e.preventDefault(); // 새로고침 방지
+                    if(this.first * this.second === parseInt(this.value)){
+                        this.result = '정답';
+
+                        this.first = Math.ceil(Math.random() * 9);
+                        this.second = Math.ceil(Math.random() * 9);
+
+                    } else {
+                        this.result = '땡';
+                    }
+
+                    this.$refs.answer.focus();
+                    this.value = '';
+                }
+            }, 
+        });
+    </script>
+</html>

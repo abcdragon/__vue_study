@@ -1,0 +1,31 @@
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0 minimum-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>좋아요</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    </head>
+    <body>
+        <div id="root">
+            <!-- 다른 언어들 처럼 v-if v-else 는 같이 붙어 다녀야 한다. 중간에 다른게 삽입되면 안 됨.(v-else-if 제외) -->
+            <!-- v-~~ 다음에 오는 문자열에는 자바스크립트를 넣을 수 있다. -->
+            <div v-if="liked">좋아요 눌렀음</div> <!-- v-if v-else 하면 식에 따라 나타나거나 사라짐. -->
+            <button v-on:click="onClickButton">Like</button> <!-- v-on:click 이라고 명시해야 methods에서 만든 함수를 사용할 수 있음 -->
+        </div>
+    </body>
+    <script>
+        const app = new Vue({
+            el: '#root', // root 라는 아이디를 가진 element를 통제한다는 의미
+            data: {
+                liked: false,
+            }, // 여기서 값이 바뀌면 알아서 업데이트 된다.
+            methods: { // s 빼먹지 않기
+                onClickButton() {
+                    this.liked = true; // this는 new Vue에 들어갈 지금 methods가 속한 객체를 의미한다.
+                }
+            }
+        });
+    </script>
+</html>

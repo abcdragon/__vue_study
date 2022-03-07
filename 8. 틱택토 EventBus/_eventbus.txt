@@ -1,0 +1,1 @@
+eventbus 는 on-click 이나 submit 같은 이벤트를 중앙에서 통제할 수 있는 시스템이다.
