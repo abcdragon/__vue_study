@@ -2,7 +2,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-Vue.use(Vuex); // 이러면 Vue와 Vuex 가 연결이 된다.
+Vue.use(Vuex); // 이러면 Vue와 Vuex 가 연결이 된다. 미들웨어와 비슷하다.
 
 // 이렇게 함수 이름을 변수로 지정하고 모듈로 바꿔 놓으면
 // vue 에서 접근할 때 오타를 낼 수가 없다.
@@ -24,7 +24,9 @@ export default new Vuex.Store({ // import store from './store';
     }, // Vue의 data와 유사
 
     getters: {
-
+        turnMessage(state) {
+            return state.turn + '님이 승리하셨습니다.';
+        }
     }, // Vue의 computed와 유사
 
     mutations: {
