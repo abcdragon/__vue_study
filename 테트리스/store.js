@@ -18,26 +18,25 @@ const minoTableData = [
     [[0, 0, 0, 0],
      [0, 0, 0, 0]],
     
-    [[0, 0, 0, 0],
-     [MINOS.I_MINO, MINOS.I_MINO, MINOS.I_MINO, MINOS.I_MINO]],
+    [[MINOS.I_MINO, MINOS.I_MINO, MINOS.I_MINO, MINOS.I_MINO]],
     
-    [[0, MINOS.O_MINO, MINOS.O_MINO, 0],
-     [0, MINOS.O_MINO, MINOS.O_MINO, 0]],
+    [[MINOS.O_MINO, MINOS.O_MINO],
+     [MINOS.O_MINO, MINOS.O_MINO]],
     
-    [[MINOS.Z_MINO, MINOS.Z_MINO, 0, 0],
-     [0, MINOS.Z_MINO, MINOS.Z_MINO, 0]],
+    [[MINOS.Z_MINO, MINOS.Z_MINO, 0],
+     [0, MINOS.Z_MINO, MINOS.Z_MINO]],
     
-    [[0, 0, MINOS.S_MINO, MINOS.S_MINO],
-     [0, MINOS.S_MINO, MINOS.S_MINO, 0]],
+    [[0, MINOS.S_MINO, MINOS.S_MINO],
+     [MINOS.S_MINO, MINOS.S_MINO, 0]],
     
-    [[0, MINOS.T_MINO, 0, 0],
-     [MINOS.T_MINO, MINOS.T_MINO, MINOS.T_MINO, 0]],
+    [[0, MINOS.T_MINO, 0],
+     [MINOS.T_MINO, MINOS.T_MINO, MINOS.T_MINO]],
     
-    [[MINOS.J_MINO, 0, 0, 0],
-     [MINOS.J_MINO, MINOS.J_MINO, MINOS.J_MINO, 0]],
+    [[MINOS.J_MINO, 0, 0],
+     [MINOS.J_MINO, MINOS.J_MINO, MINOS.J_MINO]],
 
-    [[0, 0, 0, MINOS.L_MINO],
-     [0, MINOS.L_MINO, MINOS.L_MINO, MINOS.L_MINO]],
+    [[0, 0, MINOS.L_MINO],
+     [MINOS.L_MINO, MINOS.L_MINO, MINOS.L_MINO]],
 ];
 
 const width = 16, height = 25;
@@ -54,14 +53,13 @@ const createTableData = () => {
 
 const getRandomMino = () => {
     const chosenMino = Math.floor(Math.random() * 7 + 1);
-    console.log(chosenMino);
+    //console.log(chosenMino);
     return minoTableData[chosenMino];
 }
 
 export default new Vuex.Store({
     state: {
         tableData: createTableData(),
-
         timer: 0,
         halted: true,
         clearLineNumber: 0,
@@ -73,11 +71,14 @@ export default new Vuex.Store({
 
     mutations: {
         [START_GAME](state) {
+            Vue.set(state, 'tableData', createTableData());
+
             state.timer = 0;
             state.halted = false;
             state.clearLineNumber = 0;
-            for(let i = 0; i < 2; i++){
-                for(let j = 0; j < 4; j++){
+
+            for(let i = 0; i < state.nextMinoData.length; i++){
+                for(let j = 0; j < state.nextMinoData[0].length; j++){
                     Vue.set(state.tableData[i], 6 + j, state.nextMinoData[i][j]);
                 }
             }

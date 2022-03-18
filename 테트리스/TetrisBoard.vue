@@ -1,8 +1,7 @@
 <template>
     <div align="center">
         <tetris-show-info></tetris-show-info>
-        <table>
-<tr>
+        <table><tr>
             <td><table-component /></td>
             <td><next-mino /></td>
         </tr></table>
@@ -60,16 +59,10 @@ export default {
 </script>
 
 <style scoped>
-    div#next-mino {
-        width: 50px;
-        height: 50px;
-        border: 2px solid black;
-    }
-
     button {
         font-size: 1.5em;
         margin: 1em;
-        width: 20em;
+        width: 10em;
         height: 2em;
         background: #fac511;
         border: 0.1em solid #fac511;
