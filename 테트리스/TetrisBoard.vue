@@ -1,18 +1,18 @@
 <template>
-    <div align="center">
+    <div align="center" @scroll.prevent>
         <tetris-show-info></tetris-show-info>
-        <table><tr>
-            <td><table-component /></td>
-            <td><next-mino /></td>
-        </tr></table>
-        <button @click="onClickStart">시작</button>
-        <button @click="onClickStop">정지</button>
+        <div id="board">
+            <table-component />
+            <button @click="onClickStart">시작</button>
+            <button @click="onClickStop">정지</button>
+            <next-mino />
+        </div>
     </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
-import store, { START_GAME, INCREMENT_TIMER, __DEV_END_GAME, NEXT_MINO } from './store';
+import store, { START_GAME, INCREMENT_TIMER, __DEV_END_GAME, TURN_MINO } from './store';
 
 import TetrisShowInfo from './TetrisShowInfo'
 import TableComponent from './TableComponent';
@@ -33,18 +33,22 @@ export default {
     },
 
     methods: {
+        turnMinoHandler(e) {
+            this.$store.commit(TURN_MINO, e.key);
+        },
+
         onClickStart() {
             this.$store.commit(START_GAME);
-            this.$store.commit(NEXT_MINO);
+            document.addEventListener('keydown', this.turnMinoHandler);
         },
 
         onClickStop() {
             this.$store.commit(__DEV_END_GAME);
-        }
+        },
     },
 
     watch: {
-        halted(value, oldValue){
+        halted(value, _){
             if (value === false) {    
                 interval = setInterval(() => {
                     this.$store.commit(INCREMENT_TIMER);
@@ -59,6 +63,10 @@ export default {
 </script>
 
 <style scoped>
+    div#board {
+        position: relative;
+    }
+
     button {
         font-size: 1.5em;
         margin: 1em;

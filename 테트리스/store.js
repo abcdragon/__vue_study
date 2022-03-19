@@ -7,6 +7,7 @@ export const START_GAME = 'START_GAME';
 export const INCREMENT_TIMER = 'INCREMENT_TIMER';
 export const __DEV_END_GAME = '__DEV_END_GAME';
 export const NEXT_MINO = 'NEXT_MINO';
+export const TURN_MINO = 'TURN_MINO';
 
 export const MINOS = {
     NONE: 0,
@@ -14,7 +15,18 @@ export const MINOS = {
     T_MINO: 5, J_MINO: 6, L_MINO: 7,
 };
 
-const minoTableData = [
+export const MINO_COLORS = [
+    'white',    // NONE
+    'cyan',     // I_MINO
+    'yellow',   // O_MINO
+    'red',      // Z_MINO
+    'green',    // S_MINO
+    'blue',     // T_MINO
+    'orange',   // J_MINO
+    'purple',   // L_MINO
+];
+
+const minoShapeTable = [
     [[0, 0, 0, 0],
      [0, 0, 0, 0]],
     
@@ -41,7 +53,7 @@ const minoTableData = [
 
 const width = 16, height = 25;
 
-const createTableData = () => {
+const createEmptyTable = () => {
     let tableData = Array(height);
 
     for(let i = 0; i < height; i++){
@@ -49,53 +61,79 @@ const createTableData = () => {
     }
 
     return tableData;
-}
+};
 
 const getRandomMino = () => {
-    const chosenMino = Math.floor(Math.random() * 7 + 1);
-    //console.log(chosenMino);
-    return minoTableData[chosenMino];
-}
+    const chosenMinoShape = minoShapeTable[Math.floor(Math.random() * 7 + 1)];
+
+    console.log(chosenMinoShape); // debug
+
+    const offsetX = parseInt((width - chosenMinoShape[0].length) / 2); // 실수이면 인덱싱이 안 된다.
+    return {
+        data: chosenMinoShape,
+        abPos: { // abPos : absolute position / format : x, y
+            offsetX,
+            leftUp: { x: offsetX, y: 0}, 
+            rightDown: { x: offsetX + chosenMinoShape[0].length - 1, y: chosenMinoShape.length - 1},
+        },
+    };
+};
 
 export default new Vuex.Store({
     state: {
-        tableData: createTableData(),
+        tableData: createEmptyTable(),
+        
         timer: 0,
         halted: true,
         clearLineNumber: 0,
-        nextMinoData: getRandomMino(),
-    },
 
-    getters: {
+        nowMino: null,
+        nextMino: getRandomMino(),
     },
 
     mutations: {
         [START_GAME](state) {
-            Vue.set(state, 'tableData', createTableData());
+            Vue.set(state, 'tableData', createEmptyTable());
 
             state.timer = 0;
             state.halted = false;
             state.clearLineNumber = 0;
 
-            for(let i = 0; i < state.nextMinoData.length; i++){
-                for(let j = 0; j < state.nextMinoData[0].length; j++){
-                    Vue.set(state.tableData[i], 6 + j, state.nextMinoData[i][j]);
+            Vue.set(state, 'nowMino', state.nextMino);
+            Vue.set(state, 'nextMino', getRandomMino());
+
+            for(let i = 0; i < state.nowMino.data.length; i++){
+                for(let j = 0; j < state.nowMino.data[0].length; j++){
+                    Vue.set(state.tableData[i], state.nowMino.abPos.leftUp.x + j, state.nowMino.data[i][j]);
                 }
             }
-
-            Vue.set(state, 'nextMinoData', getRandomMino());
         },
+
         [__DEV_END_GAME](state) {
             state.timer = 0;
             state.halted = true;
             state.clearLineNumber = 0;
+
+            Vue.set(state, 'tableData', createEmptyTable());
         },
+
         [INCREMENT_TIMER](state) {
             state.timer += 1;
         },
+
         [NEXT_MINO](state) {
             Vue.set(state, 'nextMinoData', getRandomMino());
-        }
+        },
+
+        [TURN_MINO](state, inputKey) {
+            switch(inputKey){
+                case 'ArrowLeft':
+                    return alert('Left Turn');
+
+                case 'ArrowRight':
+                    return alert('Right Turn');
+            }
+        },
     },
 
     actions: {
