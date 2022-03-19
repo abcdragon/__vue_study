@@ -2,8 +2,8 @@
     <div align="center">
         <span><b>다음 블럭</b></span>
         <table id="show-block">
-            <tr v-for="(yData, y) in nextMinoData" :key="y">
-                <td v-for="(xData, x) in yData" :key="x" :style="blockStyle(y, x)"/>
+            <tr v-for="(yData, y) in nextMino['data']" :key="y">
+                <td v-for="(xData, x) in yData" :key="x" :style="blockStyle(y, x)" />
             </tr>
         </table>
     </div>
@@ -11,45 +11,17 @@
 
 <script>
 import { mapState } from 'vuex';
-import { MINOS } from './store';
+import { MINO_COLORS } from './store';
 
 export default {
     computed: {
-        ...mapState(['nextMinoData']),
-        blockStyle(state) {
-            const style = {
-                borderWidth: '2px',
-                borderStyle: 'soild',
-                borderColor: 'black' 
-            };
-
+        ...mapState(['nextMino']),
+        blockStyle(state){
             return (y, x) => {
-                switch(state.nextMinoData[y][x]){
-                    case MINOS.I_MINO:
-                        return { background: 'cyan', };
-
-                    case MINOS.O_MINO:
-                        return { background: 'yellow', };
-
-                    case MINOS.Z_MINO:
-                        return { background: 'red', };
-                    
-                    case MINOS.S_MINO:
-                        return { background: 'green', };
-
-                    case MINOS.J_MINO:
-                        return { background: 'blue', };
-
-                    case MINOS.L_MINO:
-                        return { background: 'orange', };
-
-                    case MINOS.T_MINO:
-                        return { background: 'magenta', };
-                    
-                    default:
-                        return { background: 'white', };
+                return {
+                    background: MINO_COLORS[state.nextMino.data[y][x]],
                 }
-            };
+            }
         },
     },
 }
@@ -57,8 +29,15 @@ export default {
 
 <style scoped>
     div {
+        position: absolute;
+
+        top: 0%;
+        left: 50%;
+        transform: translate(180%);
+
         border: 3px solid black;
         padding: 8px;
+        width: 150px;
     }
 
     table#show-block {
@@ -69,6 +48,6 @@ export default {
     td {
         width: 30px;
         height: 30px;
-        border: 2px solid white;
+        border: 2px solid grey;
     }
 </style>

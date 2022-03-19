@@ -8,44 +8,25 @@
 
 <script>
 import { mapState } from 'vuex';
-import { MINOS } from './store';
+import { MINO_COLORS } from './store';
 
 export default {
     computed: {
         ...mapState(['tableData']),
         blockStyle(state){
             return (y, x) => {
-                switch(state.tableData[y][x]){
-                    case MINOS.I_MINO:
-                        return { background: 'cyan' };
-
-                    case MINOS.O_MINO:
-                        return { background: 'yellow' };
-
-                    case MINOS.Z_MINO:
-                        return { background: 'red' };
-                    
-                    case MINOS.S_MINO:
-                        return { background: 'green' };
-
-                    case MINOS.J_MINO:
-                        return { background: 'blue' };
-
-                    case MINOS.L_MINO:
-                        return { background: 'orange' };
-
-                    case MINOS.T_MINO:
-                        return { background: 'purple' };
-                    
-                    default:
-                        return { background: 'white' };
-                }
+                return {
+                    background: MINO_COLORS[state.tableData[y][x]],
+                };
             }
-        }
+        },
     },
+    
     methods: {
-
-    },
+        keyPress(e) {
+            console.log('hi');
+        }
+    }
 }
 </script>
 
