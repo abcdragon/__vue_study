@@ -7,7 +7,8 @@ export const START_GAME = 'START_GAME';
 export const INCREMENT_TIMER = 'INCREMENT_TIMER';
 export const __DEV_END_GAME = '__DEV_END_GAME';
 export const NEXT_MINO = 'NEXT_MINO';
-export const TURN_MINO = 'TURN_MINO';
+export const CONTROL_MINO = 'CONTROL_MINO';
+export const CHANGE_MINO = 'CHANGE_MINO';
 
 export const MINOS = {
     NONE: 0,
@@ -51,6 +52,11 @@ const minoShapeTable = [
      [MINOS.L_MINO, MINOS.L_MINO, MINOS.L_MINO]],
 ];
 
+const Left = 'ArrowLeft';
+const Right = 'ArrowRight';
+const Down = 'ArrowDown';
+const Space = ' ';
+
 const width = 16, height = 25;
 
 const createEmptyTable = () => {
@@ -73,8 +79,12 @@ const getRandomMino = () => {
         data: chosenMinoShape,
         abPos: { // abPos : absolute position / format : x, y
             offsetX,
-            leftUp: { x: offsetX, y: 0}, 
-            rightDown: { x: offsetX + chosenMinoShape[0].length - 1, y: chosenMinoShape.length - 1},
+            
+            x1: offsetX, 
+            y1: 0, 
+            
+            x2: offsetX + chosenMinoShape[0].length - 1, 
+            y2: chosenMinoShape.length - 1,
         },
     };
 };
@@ -92,21 +102,23 @@ export default new Vuex.Store({
     },
 
     mutations: {
+        [CHANGE_MINO](state) {
+            Vue.set(state, 'nowMino', state.nextMino);
+            Vue.set(state, 'nextMino', getRandomMino());
+
+            for(let i = 0; i < state.nowMino.data.length; i++){
+                for(let j = 0; j < state.nowMino.data[0].length; j++){
+                    Vue.set(state.tableData[i], state.nowMino.abPos.x1 + j, state.nowMino.data[i][j]);
+                }
+            }
+        },
+
         [START_GAME](state) {
             Vue.set(state, 'tableData', createEmptyTable());
 
             state.timer = 0;
             state.halted = false;
             state.clearLineNumber = 0;
-
-            Vue.set(state, 'nowMino', state.nextMino);
-            Vue.set(state, 'nextMino', getRandomMino());
-
-            for(let i = 0; i < state.nowMino.data.length; i++){
-                for(let j = 0; j < state.nowMino.data[0].length; j++){
-                    Vue.set(state.tableData[i], state.nowMino.abPos.leftUp.x + j, state.nowMino.data[i][j]);
-                }
-            }
         },
 
         [__DEV_END_GAME](state) {
@@ -125,18 +137,53 @@ export default new Vuex.Store({
             Vue.set(state, 'nextMinoData', getRandomMino());
         },
 
-        [TURN_MINO](state, inputKey) {
+        [CONTROL_MINO](state, inputKey) {
             switch(inputKey){
-                case 'ArrowLeft':
-                    return alert('Left Turn');
+                case Left:
+                    return console.log('Left Turn');
 
-                case 'ArrowRight':
-                    return alert('Right Turn');
+                case Right:
+                    return console.log('Right Turn');
+            
+                case Down:
+                    setTimeout(function() {
+                        console.log('pressed...');
+                    }, 500);
+                
+                    return;
+                
+                case Space: // space 임
+                    const {x1, y1, x2, y2} = {...state.nowMino.abPos};
+
+                    let [x, y] = [x1, y2];
+                    let flag = true;
+
+                    for(y = y2 + 1; y < height; y++){
+                        for(x = x1; x <= x2 && flag; x++){
+                            if(state.nowMino.data[y2][x - x1] !== 0 && state.tableData[y][x] !== 0){
+                                flag = false;
+                            }
+                        }
+
+                        if(flag === false) break;
+                    }
+
+                    y -= 1;
+                    
+                    
+                    for(x = x1; x <= x2; x++){
+                        state.tableData[y - y2 + y1][x] = state.tableData[y1][x] || state.tableData[y - y2 + y1][x];
+                        state.tableData[y][x] = state.tableData[y2][x] || state.tableData[y][x];
+
+                        Vue.set(state.tableData[y1], x, 0);
+                        Vue.set(state.tableData[y2], x, 0);
+                    }
+
+                    Vue.set(state.nowMino.abPos, 'y1', y - 1);
+                    Vue.set(state.nowMino.abPos, 'y2', y);
+
+                   return; // force down
             }
         },
     },
-
-    actions: {
-
-    }
 });
